@@ -15,14 +15,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 class Scorer(ABC):
     """
-
+    TODO
     """
     def __init__(self,
                  path_to_checkpoint: Union[Path, str]):
 
-        self.model = self.load_model(path_to_checkpoint)
-        self.cfg = None
-    
+        self.load_model(path_to_checkpoint)
+
     @abstractmethod
     def load_model(self, path_to_checkpoint: Union[Path, str]) -> None:
         pass
@@ -77,7 +76,7 @@ class Scorer(ABC):
         """
         return F.softmax(scores, dim=-1)
     
-    def entropy(self, probabilities: Tensor) -> float:
+    def entropy(self, probabilities: Tensor) -> Tensor:
         """
         Computes the casual entropy of a probability distribution.
         This metric tells us how much the model is hesidant in her predictions.
@@ -94,20 +93,20 @@ class Scorer(ABC):
         - float:
             The entropy of the probability distribution, the uncertainty of the model.
         """
-        # get a vector
-        probabilities = probabilities.flatten()
-        return -torch.sum(probabilities * torch.log(probabilities)).item()
+        # get a vector of one dimension. (in the future: deal with batched inputs.)
+        # probabilities = probabilities[0].flatten()
+        return -torch.sum(probabilities * torch.log(probabilities), dim=-1).mean()
     
     def cross_entropy(self,
                       scores: Tensor,
-                      gold_labels: Tensor) -> float:
+                      gold_labels: Tensor) -> Tensor:
         """
         Computes the cross entropy
 
         Parameters
         ----------
         - scores: Tensor
-            The scores of each token to belong to a class.
+            The scores of each token to belong to each class.
         - gold_labels: Tensor
             The gold lables of each token in the sequence. Shape=[vocab_size]
         
@@ -116,9 +115,9 @@ class Scorer(ABC):
         - float:
             The cross-entropy of the labels, i.e the negative logprobability of the gold labels.
         """
-        return F.cross_entropy(scores, gold_labels).item()
+        return F.cross_entropy(scores, gold_labels)
 
-    def loglikelihood(self, cross_entropy: float) -> float:
+    def loglikelihood(self, cross_entropy: Union[float, Tensor]) -> Union[float, Tensor]:
         """
         Computes the (log-)likelihhod of the labels given the cross-entropy.
         The loglihood is computed by just taking the opposit of the cross-entropy.
@@ -130,8 +129,8 @@ class Scorer(ABC):
         """
         return -cross_entropy
     
-    def perplexity(self, entropy_value: float) -> float:
-        """Computes the perplexity from the entropy."""
+    def perplexity(self, entropy_value: Tensor) -> Tensor:
+        """Computes the perplexity from the (cross-)entropy."""
         return torch.exp(entropy_value)
 
 class HuBERTScorer(Scorer):
@@ -175,7 +174,7 @@ class HuBERTScorer(Scorer):
             hidden_vectors = torch.cat(hidden_vectors)
             # get only the masked tokens
             masked_hidden_vectors = hidden_vectors[masker]
-            # project the hidden vectors in order to be able to compute
+            # project the hidden vectors
             return self.model.final_proj(masked_hidden_vectors)
 
     def scores(self,
@@ -195,16 +194,18 @@ class HuBERTScorer(Scorer):
         - dict:
             Pairing of metric names and their values.
         """
+        LOGGER.info("Computing statistics...")
         projected_hidden_vectors = self.forward_model(input=input_wavform, batch_size=batch_size)
-        cosine_similarity_scores = self.cosine_similarity_scores(projected_hidden_vectors, self.cfg.model.logit_temp)
+        cosine_similarity_scores = self.cosine_similarity_scores(projected_hidden_vectors=projected_hidden_vectors,
+                                                                 temperature=self.cfg.model.logit_temp,
+                                                                 label_embeddings=self.model.label_embs_concat)
         # computing all statstics
         probabilities = self.label_probabilities(cosine_similarity_scores)
         entropy = self.entropy(probabilities)
         perplexity = self.perplexity(entropy)
-        
         metrics = {
-            "entropy": entropy,
-            "perplexity": perplexity,
+            "entropy": entropy.item(),
+            "perplexity": perplexity.item(),
         }
 
         if gold_labels is not None:
@@ -212,9 +213,9 @@ class HuBERTScorer(Scorer):
             cross_perplexity = self.perplexity(cross_entropy)
             loglikelihood = self.loglikelihood(cross_entropy)
             metrics.update({
-                "cross_entropy": cross_entropy,
-                "cross_perplexity": cross_perplexity,
-                "loglikelihood": loglikelihood
+                "cross_entropy": cross_entropy.item(),
+                "cross_perplexity": cross_perplexity.item(),
+                "loglikelihood": loglikelihood.item()
             })
 
         return metrics
