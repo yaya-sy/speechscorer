@@ -1,0 +1,5 @@
+tests/input_folder/sentence_06.wav
+tests/input_folder/sentence_07.wav
+tests/input_folder/sentence_08.wav
+tests/input_folder/sentence_09.wav
+tests/input_folder/sentence_10.wav
