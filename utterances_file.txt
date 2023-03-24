@@ -1,5 +1,5 @@
-tests/input_folder/sentence_06.wav
-tests/input_folder/sentence_07.wav
-tests/input_folder/sentence_08.wav
-tests/input_folder/sentence_09.wav
-tests/input_folder/sentence_10.wav
+utterance_288915	/scratch2/whavard/DATA/LSFER/providence/recordings/raw/William/William_030418.wav	3075505	3079006
+utterance_288916	/scratch2/whavard/DATA/LSFER/providence/recordings/raw/William/William_030418.wav	3090593	3091976
+utterance_288917	/scratch2/whavard/DATA/LSFER/providence/recordings/raw/William/William_030418.wav	3091976	3094313
+utterance_288918	/scratch2/whavard/DATA/LSFER/providence/recordings/raw/William/William_030418.wav	3105281	3113987
+utterance_288919	/scratch2/whavard/DATA/LSFER/providence/recordings/raw/William/William_030418.wav	3113990	3115195

@@ -1,0 +1,7 @@
+checkpoints
+fairseq
+results
+*.wav
+*.txt
+*.log
+__pycache__

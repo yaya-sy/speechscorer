@@ -3,3 +3,12 @@
 31 01 13 92
 35 1 52 15
 4 91 12 21 31 01 13 92
+
+    def pad(self, batch: Batch):
+        """Pad a given batch by filling a given pad value."""
+        max_length = max(len(example) for example in batch)
+        padded = []
+        for example in batch:
+            example += ([-100] * (max_length - len(example)))
+            padded.append(example)
+        return padded

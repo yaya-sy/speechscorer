@@ -1,52 +1,113 @@
-from masked_language_modeling.hubert_mlm_scorer import HubertMLMScorer
+"""Import, load, and run the right scorer."""
+from typing import Dict, Tuple, Optional
+
+from .base_scorer import BaseScorer
+from .masked_language_modeling.hubert_mlm_scorer import HubertMLMScorer
+from .masked_language_modeling.wavlm_mlm_scorer import WavLMScorer
+from .conditional_language_modeling.whisper_clm_scorer import WhisperCLMScorer
+from .attention_based_scoring.whisper_attentions_scorer import WhisperAttentionScorer
+from .data_loader import DataLoader
 
 from argparse import ArgumentParser
 from typing import Iterable
-from data_loader import data_iterator
-from fairseq.data.audio.audio_utils import get_features_or_waveform
-import torch
+import logging
+from pathlib import Path
 
-def run_scorer(scorer, data) -> Iterable[tuple]:
-    use_target = False
-    columns = None
-    results = []
-    for audio_path, wavform, labels in data:
-        if columns is None:
-            if labels is None:
-                columns = ["layer", "entropy", "perplexity"]
-            if labels is not None:
-                use_target = True
-                columns = ["layer", "cross_entropy", "entropy", "cross_perplexity", "perplexity", "log_likelihood"]
-        x = torch.from_numpy(wavform).float().unsqueeze(0)
-        y = torch.tensor(labels) if use_target else None
-        metrics = scorer.scores(input_wavform=x, gold_labels=y)
-        metrics["audio_path"] = audio_path
-        results.append(metrics)
-    return results, columns
+from tqdm import tqdm
+import pandas as pd
+
+SCORERES: Dict[str, Tuple[str, BaseScorer]] = {
+    "hubert-mlm": HubertMLMScorer,
+    "wavlm-mlm": WavLMScorer,
+    "whisper-clm": WhisperCLMScorer,
+    "whisper-attention": WhisperAttentionScorer
+}
+
+LOGGER = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+
+def repeate_utterances(utterances, repeater):
+    encoder, cross = [], []
+    len_repeater = len(repeater)
+    for utterance in utterances:
+        cross.extend([utterance] * repeater[0])
+        if len_repeater == 2:
+            encoder.extend([utterance] * repeater[1])
+    return cross + encoder
+
+def run_scorer(scorer: BaseScorer,
+               dataloader: DataLoader,
+               batch_size: int=32
+               ) -> Iterable[tuple]:
+    """Run the score on the data."""
+    LOGGER.info("Scorer running...")
+    total = dataloader.sample_size
+    bar = tqdm(total=total)
+    for x, utterance_ids in dataloader(batch_size):
+        results, *repeater = scorer.scores(x=x)
+        if repeater:
+            utterance_ids = repeate_utterances(utterance_ids, *repeater)
+        assert len(results) == len(utterance_ids), "Mismatch between utterances and their metrics."
+        for utterance_id, result in zip(utterance_ids, results):
+            result["utterance_id"] = utterance_id
+            yield result
+        bar.update(x.shape[0])
+
+def init_scorer(scorer_name: str,
+                model_checkpoint,
+                use_cuda: bool=False
+                ) -> BaseScorer:
+    """Initializes a scorer class."""
+    scorer = SCORERES[scorer_name]
+    scorer = scorer(model_checkpoint, use_cuda)
+    return scorer
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("-i", "--input_audios",
-                        help="The .tsv file containing the audio paths in the first column\
-                             and (optional) the labels of the audios in the second column.")
+    parser.add_argument("-u", "--utterances_file",
+                        help="The file containing the utterance_ids.",
+                        required=True)
+    parser.add_argument("-d", "--h5_data",
+                        help="The audio utterances as numpy array.",
+                        type=str,
+                        required=True)
+    parser.add_argument("-l", "--labels_file",
+                        help="(Optional) Path to the file containing labels for each utterance in the utterances file.",
+                        required=False)
+    parser.add_argument("-m", "--model_checkpoint",
+                        help="The path to the model checkpoint (huggingface or local).",
+                        required=True)
+    parser.add_argument("-p", "--processor_checkpoint",
+                        help="The path to the processor checkpoint (huggingface or local).",
+                        required=False,
+                        default=None)
     parser.add_argument("-s", "--scorer",
-                        help="The scorer to use.")
+                        help="The scorer to use.",
+                        choices=SCORERES.keys(),
+                        default="whisper-clm")
+    parser.add_argument("-b", "--batch_size",
+                        help="The batch size.",
+                        type=int,
+                        default=32)
+    parser.add_argument('--use_cuda',
+                        action="store_true",
+                        default=False,
+                        help="If --use_cuda and gpu is available, will use gpu.")
     parser.add_argument("-o", "--output_folder",
-                        help="The .tsv file containing the audio paths in the first column\
-                             and (optional) the labels of the audios in the second column.")
+                        help="The folder where the output will be stored.",
+                        required=True)
+    parser.add_argument("-n", "--output_filename",
+                        help="The output filename.",
+                        required=True)
     args = parser.parse_args()
-    scorer = "TODO"
-    data = data_iterator(args.input_audios)
-    results, columns = run_scorer(scorer, data)
+    output_folder = Path(args.output_folder)
+    output_folder.mkdir(exist_ok=True, parents=True)
+    scorer = init_scorer(args.scorer, args.model_checkpoint, args.use_cuda)
+    processor_checkpoint = args.model_checkpoint if args.processor_checkpoint is None else args.processor_checkpoint
+    dataloader = DataLoader(args.h5_data, args.utterances_file, processor_checkpoint)
+    results = run_scorer(scorer, dataloader, batch_size=args.batch_size)
+    df = pd.DataFrame(results)
+    df.to_csv(output_folder / f"{args.output_filename}.csv")
 
 if __name__ == "__main__":
-    pass
-path = "/scratch2/ysy/DATA/PROVIDENCE/wnh/audios/Alex/010427/Mother/utterance_0214.wav" # ɡ_ʊ_d_n_aɪ_n_d-en-US-Wavenet-J
-# /scratch2/whavard/DATA/LSFER/providence/recordings/raw/Alex/Alex_030516.wav
-scorer = HubertMLMScorer("checkpoints/hubert_base_ls960.pt")
-wavform = get_features_or_waveform(path, need_waveform=True, use_sample_rate=16000)
-x = torch.from_numpy(wavform).float().unsqueeze(0)
-y = torch.randint(4, 504, (123, ))
-print(x.shape)
-metrics = scorer.scores(input_wavform=x, labels=None)
-print(list(metrics))
+    main()
