@@ -1,6 +1,7 @@
 checkpoints
 fairseq
 results
+src/scorer/abs
 *.wav
 *.txt
 *.log

@@ -71,58 +71,20 @@ class BaseScorer:
             The entropy of the probability distributions, the uncertainty of the model.
         """
         return (-torch.sum(probabilities * torch.log(probabilities), dim=-1)).mean(-1)
-
-    def cross_entropy(self,
-                      scores: Tensor,
-                      labels: Tensor,
-                      reduction: str="mean") -> Tensor:
-        """
-        Computes the cross entropy.
-
-        Parameters
-        ----------
-        - scores: Tensor
-            The scores of each token to belong to each class.
-        - gold_labels: Tensor
-            The gold lables of each token in the sequence. Shape=[vocab_size]
-        
-        Returns
-        -------
-        - float:
-            The cross-entropy of the labels, i.e the negative logprobability of the gold labels.
-        """
-        return F.cross_entropy(scores, labels, reduction=reduction)
-
-    def loglikelihood(self,
-                      cross_entropy: Union[float, Tensor]
-                      ) -> Union[float, Tensor]:
-        """
-        Computes the (log-)likelihhod of the labels given the cross-entropy.
-        The loglihood is computed by just taking the opposit of the cross-entropy.
-        
-        Parameters
-        ----------
-        - cross_entropy: float
-            The loglikelihood of the audio labels.
-        """
-        return -cross_entropy
     
     def perplexity(self, entropy_value: Tensor) -> Tensor:
         """Computes the perplexity from the (cross-)entropy."""
         return torch.exp(entropy_value)
         
     def compute_metrics(self,
-                        forward_output: Dict[str, Optional[Tensor]],
-                        labels: Optional[Tensor]=None
+                        logits: Tensor,
                         ) -> Iterable[tuple]:
         """
         Computes metrics from the output of the forward.
         
         Parameters
         ----------
-        - forward_output: dict
-            Associating each output to its tensor.
-            The outputs are [logits, loss, labels]
+        - logits: The predicted scores by the model.
         
         Returns
         -------
@@ -130,35 +92,19 @@ class BaseScorer:
             Each item of the tuple corresponding to a metric.
             If the labels are not given, the items of the tuple\
             correspond to (entropy, perplexity).
-            If the labels are given, the items correspond to\
-            (cross_entropy, cross_perplexity, entropy,\
-                perplexity, loglikelihood).
         """
-        logits, loss, labels = forward_output["logits"], forward_output["loss"], forward_output["labels"]
         if logits.ndim != 3:
             raise ValueError("The shape of the output logits has to be of the form [batch_size, seq_length, vocab_size]")
         probabilities = self.label_probabilities(logits)
         entropies =  self.entropy(probabilities)
         perplexities = self.perplexity(entropies)
-        if labels is not None and loss is None:
-            batch_size, seq_len, vocab_size = logits.shape
-            cross_entropies = self.cross_entropy(logits.view(-1, vocab_size),
-                                                 labels.view(-1),
-                                                 reduction="none")
-            cross_entropies = cross_entropies.view(batch_size, seq_len).mean(-1)
-            cross_perplexities = self.perplexity(cross_entropies)
-            loglikelihood = self.loglikelihood(cross_entropies)
-            batch_results = zip(entropies.tolist(), perplexities.tolist(),\
-                                cross_entropies.tolist(), cross_perplexities.tolist(),
-                                loglikelihood.tolist())
-            return [dict(zip(self.with_targets_metrics, results)) for results in batch_results]
 
         batch_results = list(zip(entropies.tolist(), perplexities.tolist()))
         return [dict(zip(self.metrics, results)) for results in batch_results]
 
     def scores(self,
-               x: Tensor,
-               labels: Optional[Tensor]=None) -> List[tuple]:
+               x: Tensor
+               ) -> List[tuple]:
         """
         Retrieves all the metrics for a given input_wavform
 
@@ -173,6 +119,6 @@ class BaseScorer:
             Each layer with its associated metrics (entropy, perplexity, etc.)
         """
         # LOGGER.info("Computing statistics...")
-        outputs = self.forward_model(x=x, labels=labels)
+        outputs = self.forward_model(x=x)
         # computing all statstics
-        return self.compute_metrics(outputs, labels=labels)
+        return self.compute_metrics(outputs)

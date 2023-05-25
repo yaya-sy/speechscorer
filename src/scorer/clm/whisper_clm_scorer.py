@@ -41,4 +41,4 @@ class WhisperCLMScorer(BaseCLMScorer):
             logits = torch.stack(logits, 1)
             logits[logits == float("-Inf")] = 1e-12
 
-        return {"logits": logits.cpu(), "loss": None, "labels": labels}
+        return logits

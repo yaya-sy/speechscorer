@@ -20,12 +20,6 @@ class BaseMLMScorer(BaseScorer):
     https://arxiv.org/pdf/1910.14659.pdf. The core idea is to mask\
     inputs one at team and to look how the model is hesitant at predicting\
     on those masked regions.
-
-    Two approaches are proposed. The first one require targets labels and\
-    compute the (pseudo-)likelihood based metrics of the input speech (i.e the probability\
-    of generating the right labels under the estimated parameters of the model.)\
-    The second approach does'nt require any labels and uses only the probability\
-    distribution over the labels to retrieve the metrics (entropy, perplexity).
     """
 
     def __init__(self,
