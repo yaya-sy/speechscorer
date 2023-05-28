@@ -1,6 +1,6 @@
 """Module implementing the HuBERT masked language model based scorer."""
 
-from typing import Union, List, Optional, Dict
+from typing import Union, List, Dict
 from .base_mlm_scorer import BaseMLMScorer
 from pathlib import Path
 import logging

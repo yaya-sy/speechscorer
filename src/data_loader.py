@@ -1,23 +1,24 @@
 """This module contains script for loading the data."""
 
-from typing import Union, Iterator, Tuple, Dict, List, Optional
+from typing import Union, Iterator, Tuple, List, Iterable
 from numbers import Number
 from pathlib import Path
 from itertools import islice, chain
 import logging
+from itertools import tee
 
 import torch
 from transformers import AutoProcessor
 import numpy as np
 import soundfile as sf
-import h5py
-from tqdm import tqdm
 
 Frame = Tuple[Number, Number]
-DataPath = Union[str, Path]
+DataPath = Path
+UtteranceId = str
 Array = Union[np.array, torch.Tensor]
-DataItem = tuple
-Batch = Dict[str, torch.Tensor]
+Batch = Iterable[Array]
+Item = Tuple[Array, UtteranceId]
+BatchItem = Tuple[Batch, List[UtteranceId]] 
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -32,58 +33,54 @@ class DataLoader:
 
     Parameters
     ----------
-    - utterances: str, Path
-        Path to the file storing the paths of utterances.\
-        For each line, the first column is the utterance's id\
-        the second column contains the audio path,\
-        the third column is the onset of the utterance and the\
-        last column is the offset of the utterance.
-    - targets: Optional, str, Path.
-        Path to the file containing targets (entropies) for each utterance.\
-        If given, this file must have the same lines as the utterances\
-        file.
+    - audios_folder: str, Path
+        Folder containing the audios to score.
     - checkpoint: str
         The path to the huggingface checkpoint\
         of the processor.
     """
 
     def __init__(self,
-                 h5_file: DataPath,
-                 sorted_utterances_file: DataPath,
-                 checkpoint: str,
-                 sampling_rate: int=16000,
+                 audios_folder: DataPath,
+                 checkpoint
                  ) -> None:
-        self.h5_file = h5py.File(h5_file)
-        self.sampling_rate = sampling_rate
-        with open(sorted_utterances_file, "r") as sorted_utterances:
-            self.ids = [line.strip() for line in sorted_utterances]
-        self.sample_size = len(self.ids)
+        self.audios_files = list(audios_folder.glob("*.wav"))
+        self.sample_size = len(self.audios_files)
         self.processor = AutoProcessor.from_pretrained(checkpoint)
-        self.has_timemarks = None
             
     def audio_waveform(self, audio_path: DataPath) -> Array:
         """Reads an audio and extracts waveform."""
         return sf.read(audio_path)
 
-    def audios_iterator(self):
-        """An iterator over audio frames of an audio."""
-        for utterance_id in self.ids:
-            yield utterance_id, self.h5_file[utterance_id][:]
-
-    def data_iterator(self) -> Iterator[DataItem]:
+    def data_iterator(self) -> Iterator[Tuple[str, str]]:
         """An iterator over audio frames and their corresponding labels (optional)."""
-        for utterance_id, utterance in self.audios_iterator():
-            yield utterance_id, utterance
+        for audio_file in self.audios_files:
+            audio, sr = self.audio_waveform(audio_file)
+            self.sampling_rate = sr
+            yield audio_file.stem, audio
+
+    def process_audio(self,
+                      utterances: Union[Batch, Array],
+                      padding="longest",
+                      max_length: int=20_000,
+                      ) -> torch.Tensor:
+        """Processes an audio."""
+        inputs = self.processor(utterances,
+                                return_tensors="pt",
+                                sampling_rate=self.sampling_rate,
+                                padding=padding,
+                                truncation=True,
+                                max_length=max_length)
+        return inputs["input_values"] if "input_values" in inputs else inputs["input_features"]
 
     def __call__(self,
-                 batch_size: int=32
-                 ) -> Iterator[Batch]:
+                 padding="longest",
+                 max_length: int=20_000,
+                 batch_size: int=32,
+                 ) -> Iterator[BatchItem]:
         """Creates an iterator over batches."""
         iterator = self.data_iterator()
         for first in iterator:
-            utterance_ids, utterances = zip(*chain([first], islice(iterator, batch_size - 1)))
-            inputs = self.processor(utterances,
-                                    sampling_rate=self.sampling_rate,
-                                    return_tensors="pt")
-            x = inputs["input_values"] if "input_values" in inputs else inputs["input_features"]
-            yield x, list(utterance_ids)
+            utterance_ids, audios = zip(*chain([first], islice(iterator, batch_size - 1)))
+            batch_audios = self.process_audio(audios, padding=padding, max_length=max_length)
+            yield batch_audios, list(utterance_ids)
