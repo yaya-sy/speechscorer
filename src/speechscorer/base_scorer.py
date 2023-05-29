@@ -20,7 +20,7 @@ class BaseScorer:
                  model_checkpoint: Union[Path, str],
                  use_cuda: bool=False):
         self.use_cuda = use_cuda
-        self.load_model(model_checkpoint)
+        self.model_checkpoint = model_checkpoint
         self.metrics = ["entropy", "perplexity"]
         self.with_targets_metrics = ["entropy", "perplexity","cross_entropy",\
             "cross_perplexity", "loglikelihood"]
@@ -106,11 +106,11 @@ class BaseScorer:
                x: Tensor
                ) -> List[tuple]:
         """
-        Retrieves all the metrics for a given input_wavform
+        Retrieves all the metrics for a given input wavform (x).
 
         Parameters
         ----------
-        - input_wavform:
+        - w:
             Tensor representing the audio we want to score.
         
         Returns

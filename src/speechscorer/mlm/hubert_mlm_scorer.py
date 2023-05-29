@@ -18,10 +18,11 @@ class HubertMLMScorer(BaseMLMScorer):
     """
     def __init__(self, model_checkpoint, use_cuda: bool=False):
         super().__init__(model_checkpoint=model_checkpoint, use_cuda=use_cuda)
+        self.load_model()
 
-    def load_model(self, model_checkpoint: Union[Path, str]) -> None:
-        LOGGER.info(f"Loading model from {model_checkpoint}...")
-        models, cfg, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task([model_checkpoint])
+    def load_model(self) -> None:
+        LOGGER.info(f"Loading model from {self.model_checkpoint}...")
+        models, cfg, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task([self.model_checkpoint])
         self.model = models[0].eval()
         self.device = torch.device('cuda' if torch.cuda.is_available() and self.use_cuda else 'cpu')
         LOGGER.info(f"Using device {self.device}")
@@ -30,7 +31,7 @@ class HubertMLMScorer(BaseMLMScorer):
 
     def forward_model(self,
                       x: Tensor,
-                      batch_size: int=32
+                      batch_size: int=8
                       ) -> Dict[str, Tensor]:
         """Forward the input in order to get the logits."""
         with torch.no_grad() :
@@ -41,7 +42,7 @@ class HubertMLMScorer(BaseMLMScorer):
             features = features.transpose(1, 2)
             # features = hubert.layer_norm(features) # : Maybe not deactivate this even in eval mode
             features = self.model.post_extract_proj(features)
-            ## Repeating the sequence so we can apply the masking on each token of the sequence.
+            ## Repeating the sequence so we can apply the masking on each token at a time.
             features = features.unsqueeze(1).repeat(1, features.shape[1], 1, 1) # [batch_size, seq_len, seq_len, embedding_dim]
             # here, we create the boolean masking matrix with the value 'True' in the diagonal.
             masker = torch.zeros((features.shape[1], features.shape[1]))
@@ -65,22 +66,3 @@ class HubertMLMScorer(BaseMLMScorer):
                                                    temperature=self.cfg.model.logit_temp,
                                                    label_embeddings=self.model.label_embs_concat)
             return logits.cpu()
-
-    def scores(self,
-               input_wavform: Tensor
-               ) -> List[tuple]:
-        """
-        Retrieves all the metrics for a given input_wavform
-
-        Parameters
-        ----------
-        - input_wavform:
-            Tensor representing the audio we want to score.
-        
-        Returns
-        -------
-        - List of tuples:
-            Each layer with its associated metrics (entropy, perplexity, etc.)
-        """
-        LOGGER.info("Computing statistics...")
-        return self.forward_model(x=input_wavform)

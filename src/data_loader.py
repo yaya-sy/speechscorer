@@ -5,7 +5,6 @@ from numbers import Number
 from pathlib import Path
 from itertools import islice, chain
 import logging
-from itertools import tee
 
 import torch
 from transformers import AutoProcessor
@@ -13,7 +12,6 @@ import numpy as np
 import soundfile as sf
 
 Frame = Tuple[Number, Number]
-DataPath = Path
 UtteranceId = str
 Array = Union[np.array, torch.Tensor]
 Batch = Iterable[Array]
@@ -41,14 +39,17 @@ class DataLoader:
     """
 
     def __init__(self,
-                 audios_folder: DataPath,
+                 input_audios: Union[List[Path], Path],
                  checkpoint
                  ) -> None:
-        self.audios_files = list(audios_folder.glob("*.wav"))
+        if not isinstance(input_audios, list):
+            self.audios_files = list(input_audios.glob("*"))
+        else:
+            self.audios_files = input_audios
         self.sample_size = len(self.audios_files)
         self.processor = AutoProcessor.from_pretrained(checkpoint)
             
-    def audio_waveform(self, audio_path: DataPath) -> Array:
+    def audio_waveform(self, audio_path: Path) -> Array:
         """Reads an audio and extracts waveform."""
         return sf.read(audio_path)
 
@@ -61,15 +62,15 @@ class DataLoader:
 
     def process_audio(self,
                       utterances: Union[Batch, Array],
-                      padding="longest",
-                      max_length: int=20_000,
+                      padding,
+                      max_length,
                       ) -> torch.Tensor:
         """Processes an audio."""
         inputs = self.processor(utterances,
                                 return_tensors="pt",
                                 sampling_rate=self.sampling_rate,
                                 padding=padding,
-                                truncation=True,
+                                truncation=False,
                                 max_length=max_length)
         return inputs["input_values"] if "input_values" in inputs else inputs["input_features"]
 
