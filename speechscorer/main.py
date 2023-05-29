@@ -5,7 +5,7 @@ from .mlm.wavlm_mlm_scorer import WavLMScorer
 from .clm.whisper_clm_scorer import WhisperConditionalLanguageModelScorer
 from .clm.wavlm_clm_scorer import WavLMConditionalLanguageModelScorer
 from .clm.hubert_clm_scorer import HuBERTConditionalLanguageModelScorer
-from ..data_loader import DataLoader
+from .data_loader import DataLoader
 
 from typing import Dict, Tuple
 
