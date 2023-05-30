@@ -96,7 +96,7 @@ def get_args():
     parser.add_argument('--use-gpu',
                         action="store_true",
                         default=False,
-                        help="will use gpu if --use_cuda and gpu is available.")
+                        help="will use gpu if --use-gpu and gpu is available.")
     return parser.parse_args()
 
 def main():
