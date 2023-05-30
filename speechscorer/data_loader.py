@@ -42,8 +42,8 @@ class DataLoader:
                  checkpoint
                  ) -> None:
         if not isinstance(input_audios, list):
-            self.audios_files = [input_audio.suffix.lower() in AUDIO_EXTENSIONS \
-                                 for input_audio in input_audios.glob("*")]
+            self.audios_files = [input_audio for input_audio in input_audios.glob("*")\
+                                 if input_audio.suffix.lower() in AUDIO_EXTENSIONS]
         else:
             self.audios_files = input_audios
         self.sample_size = len(self.audios_files)
