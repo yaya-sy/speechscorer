@@ -2,9 +2,9 @@ checkpoints
 fairseq
 test
 results
+sscorer
 src/scorer/abs
 src/merge_metrics.py
 *.wav
-*.txt
 *.log
 __pycache__

@@ -1,18 +1,37 @@
-from setuptools import setup
+# Always prefer setuptools over distutils
+from pathlib import Path
 
-with open("README", 'r') as f:
+from setuptools import setup, find_packages
+
+here = Path(__file__).parent.absolute()
+
+# Get the long description from the README file
+with open(here / Path('README.md')) as f:
     long_description = f.read()
 
+with open(here / Path('requirements.txt')) as f:
+    requirements = f.read().split("\n")
+
 setup(
-   name='speechscorer',
-   version='1.0',
-   description='A useful module',
-   license="MIT",
-   long_description=long_description,
-   author='Man Foo',
-   author_email='yayasyscore@gmail.com',
-   url="http://www.foopackage.example/",
-   packages=['speechscorer'],  #same as name
-   install_requires=['wheel', 'bar', 'greek'], #external packages as dependencies
-    entry_points={'console_scripts': ['speechscore = speechscore.main:main']},
+    name='speechscorer',
+    version='0.1.0',
+    description='',
+    long_description=long_description,
+    url='https://github.com/yaya-sy/speechscorer',
+    author='Yaya Sy',
+    author_email='yayasysco@gmail.com',
+    license="MIT",
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'License :: OSI Approved :: MIT License',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.9'
+    ],
+    keywords='',
+    entry_points={'console_scripts': ['speechscore = speechscorer.main:main']},
+    packages=find_packages(exclude=['docs', 'test', "checkpoints", "sscorer"]),
+    setup_requires=['setuptools>=38.6.0'],  # >38.6.0 needed for markdown README.md
+    install_requires=requirements
 )

@@ -1,9 +1,0 @@
-name: sscorer
-channels:
-  - defaults
-dependencies:
-  - python=3.8
-  - pytorch::pytorch
-  - torchvision
-  - torchaudio
-prefix: /Users/yysy/opt/miniconda3/envs/sscorer
