@@ -6,7 +6,7 @@ import logging
 
 from torch import Tensor
 import torch
-# import fairseq
+import fairseq
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
