@@ -20,18 +20,18 @@ BatchItem = Tuple[Batch, List[UtteranceId]]
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
+AUDIOS_EXTENSION = {".mp3", ".wav", ".flac"}
+
 class DataLoader:
     """
-    A dataloader that take as input a file containing\
-    for each line an audio path, the onset and the offset\
-    of the utterance. If the onsets and offsets are not specified,\
-    the whole audio given in the audio path is considered\
-    as one utterance.
+    A dataloader that take a path to an audio folder\
+    or an audio file and iterate over them.
 
     Parameters
     ----------
-    - audios_folder: str, Path
+    - audios_folder: List[Path], Path
         Folder containing the audios to score.
+        Can also be a file.
     - checkpoint: str
         The path to the huggingface checkpoint\
         of the processor.
@@ -42,7 +42,8 @@ class DataLoader:
                  checkpoint
                  ) -> None:
         if not isinstance(input_audios, list):
-            self.audios_files = list(input_audios.glob("*"))
+            self.audios_files = [input_audio.suffix in AUDIOS_EXTENSION \
+                                 for input_audio in input_audios.glob("*")]
         else:
             self.audios_files = input_audios
         self.sample_size = len(self.audios_files)
