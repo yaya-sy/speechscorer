@@ -3,6 +3,7 @@ fairseq
 test
 results
 sscorer
+build
 src/scorer/abs
 src/merge_metrics.py
 *.wav
