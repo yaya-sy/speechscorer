@@ -20,7 +20,7 @@ BatchItem = Tuple[Batch, List[UtteranceId]]
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-AUDIOS_EXTENSION = {".mp3", ".wav", ".flac"}
+AUDIO_EXTENSIONS = {".mp3", ".wav", ".flac"}
 
 class DataLoader:
     """
@@ -42,7 +42,7 @@ class DataLoader:
                  checkpoint
                  ) -> None:
         if not isinstance(input_audios, list):
-            self.audios_files = [input_audio.suffix in AUDIOS_EXTENSION \
+            self.audios_files = [input_audio.suffix.lower() in AUDIO_EXTENSIONS \
                                  for input_audio in input_audios.glob("*")]
         else:
             self.audios_files = input_audios
