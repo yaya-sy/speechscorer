@@ -18,8 +18,8 @@ class BaseScorer:
     """
     def __init__(self,
                  model_checkpoint: Union[Path, str],
-                 use_cuda: bool=False):
-        self.use_cuda = use_cuda
+                 use_gpu: bool=False):
+        self.use_gpu = use_gpu
         self.model_checkpoint = model_checkpoint
         self.metrics = ["entropy", "perplexity"]
         self.with_targets_metrics = ["entropy", "perplexity","cross_entropy",\

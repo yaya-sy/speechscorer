@@ -15,15 +15,15 @@ class HubertMLMScorer(BaseMLMScorer):
     """
     HuBERT scorer using masked language model objective.
     """
-    def __init__(self, model_checkpoint, use_cuda: bool=False):
-        super().__init__(model_checkpoint=model_checkpoint, use_cuda=use_cuda)
+    def __init__(self, model_checkpoint, use_gpu: bool=False):
+        super().__init__(model_checkpoint=model_checkpoint, use_gpu=use_gpu)
         self.load_model()
 
     def load_model(self) -> None:
         LOGGER.info(f"Loading model from {self.model_checkpoint}...")
         models, cfg, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task([self.model_checkpoint])
         self.model = models[0].eval()
-        self.device = torch.device('cuda' if torch.cuda.is_available() and self.use_cuda else 'cpu')
+        self.device = torch.device('cuda' if torch.cuda.is_available() and self.use_gpu else 'cpu')
         LOGGER.info(f"Using device {self.device}")
         self.model.to(self.device)
         self.cfg = cfg

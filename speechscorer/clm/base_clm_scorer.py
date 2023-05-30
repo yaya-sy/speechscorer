@@ -12,14 +12,14 @@ class BaseConditionalLanguageModelScorer(BaseScorer):
     at each step of the prediction. So computing the entropy on those\
     scores can be seen as the hesitation of the model on its predictions.
     """
-    def __init__(self, model_checkpoint: Union[Path, str], use_cuda: bool = False):
-        super().__init__(model_checkpoint, use_cuda)
+    def __init__(self, model_checkpoint: Union[Path, str], use_gpu: bool = False):
+        super().__init__(model_checkpoint, use_gpu)
 
     def load_model(self,
                    model_class,
                    logger: Logger) -> None:
         logger.info("Loading the model...")
         self.model = model_class.from_pretrained(self.model_checkpoint).eval()
-        self.device = torch.device('cuda' if torch.cuda.is_available() and self.use_cuda else 'cpu')
+        self.device = torch.device('cuda' if torch.cuda.is_available() and self.use_gpu else 'cpu')
         logger.info(f"Using device {self.device}")
         self.model.to(self.device)

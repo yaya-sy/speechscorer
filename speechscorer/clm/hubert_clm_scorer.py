@@ -16,8 +16,8 @@ class HuBERTConditionalLanguageModelScorer(BaseConditionalLanguageModelScorer):
     This class implements a WavLM conditional language model\
     based scorer.
     """
-    def __init__(self, model_checkpoint: Union[Path, str], use_cuda: bool = False):
-        super().__init__(model_checkpoint, use_cuda)
+    def __init__(self, model_checkpoint: Union[Path, str], use_gpu: bool = False):
+        super().__init__(model_checkpoint, use_gpu)
         self.load_model(model_class=HubertForCTC, logger=LOGGER)
     
     def forward_model(self,

@@ -49,11 +49,11 @@ def run_scorer(scorer: BaseScorer,
 
 def init_scorer(scorer_name: str,
                 model_checkpoint,
-                use_cuda: bool=False
+                use_gpu: bool=False
                 ) -> BaseScorer:
     """Initializes a scorer class."""
     scorer = SCORERES[scorer_name]
-    scorer = scorer(model_checkpoint, use_cuda)
+    scorer = scorer(model_checkpoint, use_gpu)
     return scorer
 
 def get_args():
@@ -93,7 +93,7 @@ def get_args():
                         help="The the max length of the input sequence to consider.",
                         required=False,
                         default=None)
-    parser.add_argument('--use_cuda',
+    parser.add_argument('--use-gpu',
                         action="store_true",
                         default=False,
                         help="will use gpu if --use_cuda and gpu is available.")
@@ -103,7 +103,7 @@ def main():
     args = get_args()
     output_folder = Path("results")
     output_folder.mkdir(exist_ok=True, parents=True)
-    scorer = init_scorer(args.scorer, args.model_checkpoint, args.use_cuda)
+    scorer = init_scorer(args.scorer, args.model_checkpoint, args.use_gpu)
     processor_checkpoint = args.model_checkpoint if args.processor_checkpoint is None else args.processor_checkpoint
     input_audios = Path(args.audio)
     if input_audios.is_file():

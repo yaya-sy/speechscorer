@@ -24,8 +24,8 @@ class BaseMLMScorer(BaseScorer):
 
     def __init__(self,
                  model_checkpoint: Union[Path, str],
-                 use_cuda: bool=False):
-        super().__init__(model_checkpoint=model_checkpoint, use_cuda=use_cuda)
+                 use_gpu: bool=False):
+        super().__init__(model_checkpoint=model_checkpoint, use_gpu=use_gpu)
         
     def cosine_similarity_scores(self,
                                  projected_hidden_vectors: Tensor,
