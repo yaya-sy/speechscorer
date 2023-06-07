@@ -30,7 +30,8 @@ class HubertMLMScorer(BaseMLMScorer):
 
     def forward_model(self,
                       x: Tensor,
-                      batch_size: int=8
+                      batch_size: int=8,
+                      **kwargs
                       ) -> Dict[str, Tensor]:
         """Forward the input in order to get the logits."""
         with torch.no_grad() :

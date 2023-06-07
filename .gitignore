@@ -6,6 +6,7 @@ sscorer
 build
 src/scorer/abs
 src/merge_metrics.py
+.gitignore
 .DS_Store
 *.wav
 *.log

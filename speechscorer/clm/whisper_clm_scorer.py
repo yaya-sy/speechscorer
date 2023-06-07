@@ -21,7 +21,8 @@ class WhisperConditionalLanguageModelScorer(BaseConditionalLanguageModelScorer):
         self.load_model(model_class=WhisperForConditionalGeneration, logger=LOGGER)
     
     def forward_model(self,
-                      x: Tensor
+                      x: Tensor,
+                      **kwargs
                       ) -> Dict[str, Tensor]:
         with torch.no_grad():
             x = x.to(self.device)
