@@ -19,7 +19,7 @@ X^{t_{i}} = p(\cdot|t_{1}, t_{2}, ..., t_{i-1}; \textbf{x})
 The entropy of this probability distribution can be computed as:
 
 ```math
-H(X^{t_{i}}) = \sum\limits_{p\in X} p\;\times\;log\;p
+H(X^{t_{i}}) = \sum\limits_{p\in X^{t_{i}}} p\;\times\;log\;p
 ```
 
 This quantity tells us how well the model is hesitant on predicting the next token.
