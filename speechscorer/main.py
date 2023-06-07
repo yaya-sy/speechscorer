@@ -82,7 +82,7 @@ def get_args():
                         type=int,
                         help="The maximum of examples to feed to the model.",
                         required=False,
-                        default=1)
+                        default=8)
     parser.add_argument("-d", "--padding",
                         type=str,
                         help="The padding strategy",
