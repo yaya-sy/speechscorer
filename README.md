@@ -12,7 +12,7 @@ Different models pretrained with different training objectives are proposed: HuB
 # How it works
 The scoring method relies on the internal model hesitation (entropy) while predicting for the input speech. Depending on the model and its training objective, the entropy is computed differently. You can learn more about how it works by reading the documentation:
 - [Models trained with the masked language model objective](docs/masked_language_modeling.md)
-- [Models trained with the ASR objective](docs/masked_language_modeling.md)
+- [Models trained with the ASR objective](docs/conditional_language_modeling.md)
 
 # Getting
 
@@ -23,6 +23,16 @@ Then you can install speechscorer using pip:
 pip install git+https://github.com/yaya-sy/speechscorer.git
 ```
 
+once installed, you can score your utterance with this command:
+
+```bash
+speechscore -a <your-audio>
+```
+
+To see more available options, run:
+```bash
+speechscore -h
+```
 # Demo
 
 You can find a colab notebook in `demo/speechscorer.ipynb` for an example of use case.
