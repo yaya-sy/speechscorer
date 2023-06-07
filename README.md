@@ -1,2 +1,2 @@
 # SpeechScorer
-![Comparison of human and HuBERT assigned scores to english language learners](plots/hubert-mlm-scorer.png)
+<img width="280" alt="2022-04-09_122409" src="plots/hubert-mlm-scorer.png">
