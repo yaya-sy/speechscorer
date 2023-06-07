@@ -10,7 +10,7 @@ To do so, we give to the model an input speech and we ask it to transcribe the s
 # More formally
 
 Let $\textbf{x}$ be the input speech and $\textbf{t}$ the model's transcription of this input speech.
-In order to transcribe the input speech, the model chooses the next token $t_{i}$ from a probability distribution over a vocabulary $V$. This probability distribution $p^{t_{i}}_{V}$ is conditionned with the historic $h=t_{1}, t_{2}, ..., t_{i-1}$ and the input speech $x$:
+In order to transcribe the input speech, the model chooses the next token $t_{i}$ from a probability distribution over a vocabulary $V$. This probability distribution $p^{t_{i}}_{V}$ is conditionned with the historic $h$ = $t_{1}, t_{2}, ..., t_{i-1}$ and the input speech $x$:
 
 ```math
 p^{t_{i}}_{V} = p(\cdot|t_{1}, t_{2}, ..., t_{i-1}; \textbf{x})
@@ -26,6 +26,6 @@ This quantity tells us how well the model is hesitant on predicting the next tok
 
 The overall _hesitation_ of the model at transcribing the speech can be computed as:
 
-$$
+```math
 H(\textbf{x}) = \frac{1}{n}\sum\limits_{t_{i} \in \textbf{t}} H(p^{t_{i}}_{V})
-$$
+```
