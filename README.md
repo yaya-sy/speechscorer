@@ -1,4 +1,6 @@
-# SpeechScorer
+# speechscorer: a simple online spoken utterance scorer.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/yaya-sy/speechscorer/blob/main/demo/speechscorer.ipynb/)
+
 <p align="center">
-    <img width="580" alt="2022-04-09_122409" src="plots/hubert-mlm-scorer.png">
+    <img width="580" alt="speechocean correlations" src="plots/hubert-mlm-scorer.png">
 </p>
