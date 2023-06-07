@@ -13,7 +13,7 @@ Let $\textbf{x}$ be the input speech and $\textbf{t}$ the model's transcription 
 In order to transcribe the input speech, the model chooses at each step the next token $t_{i}$ from a probability distribution over a vocabulary $V$. We call this probability distribution $X^{t_{i}}$ and it's conditionned by the historic $h=t_{1}, t_{2}, ..., t_{i-1}$ and the input speech $\textbf{x}$:
 
 ```math
-X^{t_{i}} = p(\cdot|t_{1}, t_{2}, ..., t_{i-1}; \textbf{x})
+X^{t_{i}} = P(\cdot|t_{1}, t_{2}, ..., t_{i-1}; \textbf{x})
 ```
 
 The entropy of this probability distribution can be computed as:

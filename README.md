@@ -1,2 +1,2 @@
 # SpeechScorer
-Score a speech sequences using speech models trained with masked language model objective.
+![Comparison of human and HuBERT assigned scores to english language learners](plots/hubert-mlm-scorer.png)
