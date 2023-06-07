@@ -13,13 +13,13 @@ Let $\textbf{x}$ be the input speech and $\textbf{t}$ the model's transcription 
 In order to transcribe the input speech, the model chooses the next token $t_{i}$ from a probability distribution over a vocabulary $V$. This probability distribution $p^{t_{i}}$ is conditionned with the historic $h=t_{1}, t_{2}, ..., t_{i-1}$ and the input speech $x$:
 
 ```math
-p^{t_{i}}_{V} = p(\cdot|t_{1}, t_{2}, ..., t_{i-1}; \textbf{x})
+p^{t_{i}} = p(\cdot|t_{1}, t_{2}, ..., t_{i-1}; \textbf{x})
 ```
 
 The entropy of this probability distribution can be computed as:
 
 ```math
-H(p^{t_{i}}_{V}) = \sum\limits_{v\in V} p^{t_{i}}_{V}(v)\;\times\;log\;p^{t_{i}}_{V}(v)
+H(p^{t_{i}}) = \sum\limits_{v\in V} p^{t_{i}}_{V}(v)\;\times\;log\;p^{t_{i}}_{V}(v)
 ```
 
 This quantity tells us how well the model is hesitant on predicting the next token.
@@ -27,5 +27,5 @@ This quantity tells us how well the model is hesitant on predicting the next tok
 The overall _hesitation_ of the model at transcribing the speech can be computed as:
 
 ```math
-H(\textbf{x}) = \frac{1}{n}\sum\limits_{t_{i} \in \textbf{t}} H(p^{t_{i}}_{V})
+H(\textbf{x}) = \frac{1}{n}\sum\limits_{t_{i} \in \textbf{t}} H(p^{t_{i}})
 ```
