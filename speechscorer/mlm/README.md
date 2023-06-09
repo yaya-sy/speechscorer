@@ -15,23 +15,23 @@ In order to compute the overall entropy of the whole sequence $\textbf{u}$, each
 
 where $u_{\tiny MASK}$ is the masked token contextual representation.
 
-The probability distribution over the vocabulary for the $u_{\tiny MASK}$ of the $\textbf{u}^{i}$ sequence can be computed as:
+Let's call $\textbf{u}^{i}_{\tiny mask}$ the masked token of the $\textbf{u}^{i}$ sequence. The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask}$ can be computed as:
 
 ```math
-X^{\tiny mask}_{\textbf{u}^{i}} = \frac{u_{\tiny MASK}\; \cdot W}{\sum u_{\tiny MASK}\; \cdot W}
+X^{\textbf{u}^{i}_{\tiny mask}} = \frac{\textbf{u}^{i}_{\tiny mask}\; \cdot W}{\sum u_{\tiny MASK}\; \cdot W}
 ```
 
 where $W \in \mathbb{R}^{d*V}$, with $V$ the vocabulary size.
 
-The entropy for the $u_{\tiny MASK}$ is defined as:
+The entropy for the $\textbf{u}^{i}_{\tiny mask}$ is defined as:
 
 ```math
-X^{\tiny mask}_{\textbf{u}^{i}} = \sum\limits_{p\in X^{\tiny mask}} p \times log\;p
+H(X^{\textbf{u}^{i}_{\tiny mask}}) = \sum\limits_{p\in X^{X^{\textbf{u}^{i}_{\tiny mask}}}} p \times log\;p
 ```
 
 The overall entropy of the input speech can be compute as:
 
 ```math
-H(\textbf{x}) = \frac{1}{n} \sum\limits_{i=1}^{n} H(X^{\tiny mask}_{\textbf{u}^{i}})
+H(\textbf{x}) = \frac{1}{n} \sum\limits_{i=1}^{n} H(X^{\textbf{u}^{i}_{\tiny mask}})
 ```
 
