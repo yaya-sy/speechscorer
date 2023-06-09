@@ -11,8 +11,8 @@ Different models pretrained with different training objectives are proposed: HuB
 
 # How it works
 The scoring method relies on the internal model hesitation (entropy) while predicting for the input speech. Depending on the model and its training objective, the entropy is computed differently. You can learn more about how it works by reading the documentation:
-- [Models trained with the masked language model objective](docs/masked_language_modeling.md)
-- [Models trained with the ASR objective](docs/conditional_language_modeling.md)
+- [Models trained with the masked language model objective](speechscorer/mlm/README.md)
+- [Models trained with the ASR objective](speechscorer/clm/README.md)
 
 # Getting
 
