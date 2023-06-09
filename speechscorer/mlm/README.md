@@ -26,7 +26,7 @@ where $W \in \mathbb{R}^{d*V}$, with $V$ the vocabulary size.
 The entropy for the $\textbf{u}^{i}_{\tiny mask}$ is defined as:
 
 ```math
-H(X^{\textbf{u}^{i}_{\tiny mask}}) = \sum\limits_{p\in X^{X^{\textbf{u}^{i}_{\tiny mask}}}} p \times log\;p
+H(X^{\textbf{u}^{i}_{\tiny mask}}) = \sum\limits_{p\in X^{\textbf{u}^{i}_{\tiny mask}}} p \times log\;p
 ```
 
 The overall entropy of the input speech can be compute as:
