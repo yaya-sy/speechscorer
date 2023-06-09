@@ -36,3 +36,6 @@ speechscore -h
 # Demo
 
 You can find a colab notebook in `demo/speechscorer.ipynb` for an example of use case.
+
+# Biases
+The models are trained using speech from dominant populations: Western, affluent and white man ways of speaking English. Model results are therefore strongly influenced by the way English is spoken by these dominant populations. Scores can be low for good English but from under-represented populations (Jamaican English, Nigerian English, etc.) and from women.

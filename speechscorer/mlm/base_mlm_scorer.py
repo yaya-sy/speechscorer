@@ -1,5 +1,6 @@
-"""Module implementing the different type of\
-    masked language model based scorers"""
+"""Module implementing an abstract class for\
+    the different types of masked language model\
+    based scorers"""
 
 from ..base_scorer import BaseScorer
 from typing import Union
@@ -11,15 +12,15 @@ from torch import Tensor
 
 class BaseMLMScorer(BaseScorer):
     """
-    Will compute different scores from speech models trained\
+    Will compute entropy from speech models trained\
     on masked language model objective.
     This is an abstract class for models like HuBERT\
     and derivatives (WavLM, etc.)
 
     This is highly inspired from BERT-like scoring as describe in\
-    https://arxiv.org/pdf/1910.14659.pdf. The core idea is to mask\
-    inputs one at team and to look how the model is hesitant at predicting\
-    on those masked regions.
+    https://arxiv.org/pdf/1910.14659.pdf. The main idea is to mask\
+    inputs one token at a time and to look how the model is\
+    hesitant at predicting on those masked regions.
     """
 
     def __init__(self,
@@ -32,7 +33,7 @@ class BaseMLMScorer(BaseScorer):
                                  label_embeddings: Tensor,
                                  temperature: int) -> Tensor:
         """
-        Computes the scores for each token (hidden vector) to belong to a label.
+        Computes the scores for each token of belonging to a label.
         The scores are computed using the cosine similarity.
         See the equation (3): https://arxiv.org/pdf/2106.07447.pdf.
         Both HuBERT and WavLM compute the scores the same way.
@@ -42,7 +43,7 @@ class BaseMLMScorer(BaseScorer):
         - projected_hidden_vectors: Tensor
             The hidden vectors already projected for computing the logits.
         - label_embeddings: Tensor
-            The matrix containing an embeddings for each label.
+            The matrix containing embeddings for each label.
         
         Returns
         -------

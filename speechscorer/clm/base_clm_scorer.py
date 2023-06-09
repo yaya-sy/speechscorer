@@ -7,10 +7,12 @@ import torch
 
 class BaseConditionalLanguageModelScorer(BaseScorer):
     """
-    Base scorer for conditional language model speech models.\
+    Base scorer for conditional language models.\
     The logits are the scores over the vocabulary\
-    at each step of the prediction. So computing the entropy on those\
-    scores can be seen as the hesitation of the model on its predictions.
+    at each step of the predicted transcription.\
+    So computing the entropy on those logits can be\
+    seen as the hesitation of the model at transcribing\
+    the input speech.
     """
     def __init__(self, model_checkpoint: Union[Path, str], use_gpu: bool = False):
         super().__init__(model_checkpoint, use_gpu)

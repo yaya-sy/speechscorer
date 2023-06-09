@@ -1,4 +1,4 @@
-"""WavLM conditional language model based scorer."""
+"""HuBERT conditional language model based scorer."""
 from .base_clm_scorer import BaseConditionalLanguageModelScorer
 from typing import Union, Dict
 from pathlib import Path
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 class HuBERTConditionalLanguageModelScorer(BaseConditionalLanguageModelScorer):
     """
-    This class implements a WavLM conditional language model\
+    This class implements a HuBERT conditional language model\
     based scorer.
     """
     def __init__(self, model_checkpoint: Union[Path, str], use_gpu: bool = False):
