@@ -15,7 +15,9 @@ In order to compute the overall entropy of the whole sequence $\textbf{u}$, each
 
 where $u_{\tiny MASK}$ is the masked token contextual representation.
 
-Let $\textbf{u}^{i}_{\tiny mask}$ be the masked token of the $u$ sequence. The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask}$ can be computed as:
+Let $\textbf{u}^{i}_{\tiny mask}$ be the masked token of the $u$ sequence.
+
+The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask}$ can be computed as:
 
 ```math
 X^{\textbf{u}^{i}_{\tiny mask}} = \frac{\textbf{u}^{i}_{\tiny mask}\; \cdot W}{\sum u_{\tiny MASK}\; \cdot W}
