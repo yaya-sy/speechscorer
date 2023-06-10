@@ -1,4 +1,4 @@
-# speechscorer: a simple online spoken utterance scorer.
+# speechscorer: a simple spoken utterance scorer.
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/yaya-sy/speechscorer/blob/main/demo/speechscorer.ipynb)
 
 <p align="center">
@@ -14,7 +14,7 @@ The scoring method relies on the internal model hesitation (entropy) while predi
 - [Models trained with the masked language model objective](speechscorer/mlm/README.md)
 - [Models trained with the ASR objective](speechscorer/clm/README.md)
 
-# Getting
+# Getting start
 
 You will first need to istall the right [PyTorch](https://pytorch.org/get-started/locally/) for your computer
 
@@ -38,4 +38,4 @@ speechscore -h
 You can find a colab notebook in `demo/speechscorer.ipynb` for an example of use case.
 
 # Biases
-The models are trained using speech from dominant populations: Western, affluent and white man ways of speaking English. Model results are therefore strongly influenced by the way English is spoken by these dominant populations. Scores can be low for good English but from under-represented populations (Jamaican English, Nigerian English, etc.) and from women.
+The models are trained using speech from dominant populations: Western, affluent and white man ways of speaking English. Model results are therefore strongly influenced by the way English is spoken by these dominant populations. Scores can be low for native English but from under-represented populations (Jamaican English, Nigerian English, etc.) and from women.
