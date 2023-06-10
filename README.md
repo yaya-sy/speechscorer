@@ -1,4 +1,4 @@
-# speechscorer: a simple spoken utterance scorer.
+# speechscorer: a simple unsupervised spoken utterance scorer.
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/yaya-sy/speechscorer/blob/main/demo/speechscorer.ipynb)
 
 <p align="center">
