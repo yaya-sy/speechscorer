@@ -20,7 +20,7 @@ Let $\textbf{u}^{i}_{\tiny mask}$ be the masked token of the $u^{i}$ sequence.
 The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask}$ can be computed as:
 
 ```math
-X^{\textbf{u}^{i}_{\tiny mask}} = \frac{exp \big(\textbf{u}^{i}_{\tiny mask}\; \cdot W}{\sum \textbf{u}^{i}_{\tiny mask}\; \cdot W}
+X^{\textbf{u}^{i}_{\tiny mask}} = \frac{\exp \big(\textbf{u}^{i}_{\tiny mask}\; \cdot W}{\sum \textbf{u}^{i}_{\tiny mask}\; \cdot W}
 ```
 
 where $W \in \mathbb{R}^{d*V}$, with $V$ the vocabulary size.
