@@ -17,7 +17,7 @@ where $u_{\tiny mask}$ is the masked token contextual representation.
 
 Let $\textbf{u}^{i}_{\tiny mask}$ be the masked token of the $u^{i}$ sequence.
 
-The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask}$ can be computed as:
+The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask}$ masked token is:
 
 ```math
 X^{\textbf{u}^{i}_{\tiny mask}} = P(\cdot|\textbf{u}^{i}_{\tiny mask})
