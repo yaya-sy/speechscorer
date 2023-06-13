@@ -24,6 +24,7 @@ X^{\textbf{u}^{i}_{\tiny mask}} = P(\cdot|\textbf{u}^{i}_{\tiny mask})
 ```
 
 where $X^{\textbf{u}^{i}_{\tiny mask}} \in \mathbb{R}^V$ is a vector of probability over the vocabulary $V$.
+
 The entropy for the $\textbf{u}^{i}_{\tiny mask}$ is defined as:
 
 ```math
