@@ -23,8 +23,7 @@ The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask
 X^{\textbf{u}^{i}_{\tiny mask}} = P(\cdot|\textbf{u}^{i}_{\tiny mask})
 ```
 
-where $W \in \mathbb{R}^{d*V}$, with $V$ the vocabulary size.
-
+where $X^{\textbf{u}^{i}_{\tiny mask}} \in \mathbb{R}^V$ is a vector of probability over the vocabulary $V$.
 The entropy for the $\textbf{u}^{i}_{\tiny mask}$ is defined as:
 
 ```math
