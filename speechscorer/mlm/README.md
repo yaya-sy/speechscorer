@@ -5,7 +5,7 @@ For the trained model, we expect the input speech to be more predictible for goo
 
 # More formally
 
-Let $\textbf{x}$ be the input speech and $\textbf{u}={u_{1}, u_{2}, ..., u_{n}}$ the encoded input speech by the bert-like speech model, where each $u_{i} \in \mathbb{R}^{d}$ with $d$ the embedding size.
+Let $\textbf{u}={u_{1}, u_{2}, ..., u_{n}}$ be the encoded input speech by the bert-like speech model, where each $u_{i} \in \mathbb{R}^{d}$ with $d$ the embedding size.
 In order to compute the overall entropy of the whole sequence $\textbf{u}$, each vector is masked at time:
 - $\textbf{u}^{1}={u_{\tiny mask}, u_{2}, u_{3}, ..., u_{n}}$
 - $\textbf{u}^{2}={u_{1}, u_{\tiny mask}, u_{3}, ..., u_{n}}$
@@ -34,6 +34,6 @@ H(X^{\textbf{u}^{i}_{\tiny mask}}) = \sum\limits_{p\in X^{\textbf{u}^{i}_{\tiny 
 The overall entropy of the input speech can be compute as:
 
 ```math
-H(\textbf{x}) = \frac{1}{n} \sum\limits_{i=1}^{n} H(X^{\textbf{u}^{i}_{\tiny mask}})
+H = \frac{1}{n} \sum\limits_{i=1}^{n} H(X^{\textbf{u}^{i}_{\tiny mask}})
 ```
 
