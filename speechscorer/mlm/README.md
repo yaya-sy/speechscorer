@@ -7,20 +7,20 @@ For the trained model, we expect the input speech to be more predictible for goo
 
 Let $\textbf{x}$ be the input speech and $\textbf{u}={u_{1}, u_{2}, ..., u_{n}}$ the encoded input speech by the bert-like speech model, where each $u_{i} \in \mathbb{R}^{d}$ with $d$ the embedding size.
 In order to compute the overall entropy of the whole sequence $\textbf{u}$, each vector is masked at time:
-- $\textbf{u}^{1}={u_{\tiny MASK}, u_{2}, u_{3}, ..., u_{n}}$
-- $\textbf{u}^{2}={u_{1}, u_{\tiny MASK}, u_{3}, ..., u_{n}}$
-- $\textbf{u}^{3}={u_{1}, u_{2}, u_{\tiny MASK}, ..., u_{n}}$
+- $\textbf{u}^{1}={u_{\tiny mask}, u_{2}, u_{3}, ..., u_{n}}$
+- $\textbf{u}^{2}={u_{1}, u_{\tiny mask}, u_{3}, ..., u_{n}}$
+- $\textbf{u}^{3}={u_{1}, u_{2}, u_{\tiny mask}, ..., u_{n}}$
 - ...
-- $\textbf{u}^{n}={u_{1}, u_{2}, ..., u_{\tiny MASK}}$
+- $\textbf{u}^{n}={u_{1}, u_{2}, ..., u_{\tiny mask}}$
 
-where $u_{\tiny MASK}$ is the masked token contextual representation.
+where $u_{\tiny mask}$ is the masked token contextual representation.
 
-Let $\textbf{u}^{i}_{\tiny mask}$ be the masked token of the $u$ sequence.
+Let $\textbf{u}^{i}_{\tiny mask}$ be the masked token of the $u^{i}$ sequence.
 
 The probability distribution over the vocabulary for $\textbf{u}^{i}_{\tiny mask}$ can be computed as:
 
 ```math
-X^{\textbf{u}^{i}_{\tiny mask}} = \frac{\textbf{u}^{i}_{\tiny mask}\; \cdot W}{\sum u_{\tiny MASK}\; \cdot W}
+X^{\textbf{u}^{i}_{\tiny mask}} = \frac{\textbf{u}^{i}_{\tiny mask}\; \cdot W}{\sum \textbf{u}^{i}_{\tiny mask}\; \cdot W}
 ```
 
 where $W \in \mathbb{R}^{d*V}$, with $V$ the vocabulary size.
