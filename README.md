@@ -5,7 +5,7 @@
     <img width="580" alt="speechocean correlations" src="plots/hubert-mlm-scorer.png">
 </p>
 
-This package enable you to assign a score to a given spoken utterance (audio). This score can reflect the intelligbility or the fluency/grammaticality of the utterance.
+This package enables you to assign a score to a given spoken utterance (audio). This score can reflect the intelligbility or the fluency/grammaticality of the utterance.
 
 Different models pretrained with different training objectives are proposed: HuBERT, Whisper and WavLM.
 
